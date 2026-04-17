@@ -31,12 +31,13 @@ services:
     image: livekit/egress:latest
     container_name: nextgen_egress
     restart: unless-stopped
+    # CHÚ Ý ĐIỂM FIX: Xóa sạch lệnh đọc file và volume gắn file. 
+    # Nạp trực tiếp tham số vào thẳng container. Không có file = Không bao giờ lỗi "is a directory" nữa!
     environment:
-      # Cập nhật đường dẫn trỏ tới file mới
-      - EGRESS_CONFIG_FILE=/etc/egress-config.yaml
-    volumes:
-      # Đổi tên file mount để ép Docker đọc file thật
-      - ./egress-config.yaml:/etc/egress-config.yaml:ro
+      - EGRESS_API_KEY=API_nextgen_admin_key
+      - EGRESS_API_SECRET=SEC_thanhnguyen_group_super_secure_9999
+      - EGRESS_WS_URL=ws://livekit-server:7880
+      - EGRESS_REDIS_ADDRESS=redis:6379
     depends_on:
       - livekit-server
       - redis
