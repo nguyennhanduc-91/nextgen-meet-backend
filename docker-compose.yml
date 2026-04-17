@@ -1,7 +1,6 @@
 version: '3.8'
 
 services:
-  # Redis: Quản lý trạng thái, đồng bộ hóa các luồng và cần thiết cho tính năng Egress (Ghi hình)
   redis:
     image: redis:7-alpine
     container_name: nextgen_redis
@@ -12,18 +11,16 @@ services:
     networks:
       - nextgen_network
 
-  # LiveKit Server: Lõi xử lý WebRTC (Video/Audio)
   livekit-server:
     image: livekit/livekit-server:latest
     container_name: nextgen_livekit
     restart: unless-stopped
-    # LƯU Ý QUAN TRỌNG: Bạn PHẢI thay YOUR_VPS_PUBLIC_IP bằng địa chỉ IP thật của VPS
-    # Ví dụ: command: --config /etc/livekit.yaml --node-ip 103.11.22.33
-    command: --config /etc/livekit.yaml --node-ip YOUR_VPS_PUBLIC_IP
+    # ⚠️ QUAN TRỌNG: Bạn thay CHINH_XAC_IP_PUBLIC_CUA_BAN bằng IP thật của VPS. 
+    # TUYỆT ĐỐI KHÔNG điền 10.0.1.9. Nếu không thay đúng, phòng họp sẽ bị màn hình đen.
+    command: --config /etc/livekit.yaml --node-ip 194.233.84.253
     volumes:
       - ./livekit.yaml:/etc/livekit.yaml
     ports:
-      # Expose trực tiếp các port này ra môi trường Host, Coolify proxy sẽ không can thiệp vào các port này
       - "7881:7881/tcp"
       - "7882:7882/udp"
       - "50000-50050:50000-50050/udp"
@@ -32,18 +29,15 @@ services:
     networks:
       - nextgen_network
 
-  # LiveKit Egress: Module xử lý ghi hình, xuất video mp4 hoặc livestream RTMP
   livekit-egress:
     image: livekit/egress:latest
     container_name: nextgen_egress
     restart: unless-stopped
     environment:
-      # Kết nối tới redis qua tên service trong Docker network
       - EGRESS_REDIS_ADDRESS=redis:6379 
-      # Phải khớp 100% với file livekit.yaml
-      - EGRESS_API_KEY=apikey_nextgen_admin
-      - EGRESS_API_SECRET=secret_thanhnguyen_group_super_secure_key_2026
-      # Trỏ WS về port mặc định của livekit-server
+      # Key đã được tạo sẵn cố định
+      - EGRESS_API_KEY=API_nextgen_admin_key
+      - EGRESS_API_SECRET=SEC_thanhnguyen_group_super_secure_9999
       - EGRESS_WS_URL=ws://livekit-server:7880
     depends_on:
       - livekit-server
@@ -57,4 +51,3 @@ volumes:
 networks:
   nextgen_network:
     driver: bridge
-```
