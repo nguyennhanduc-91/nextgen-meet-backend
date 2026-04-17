@@ -31,13 +31,15 @@ services:
     image: livekit/egress:latest
     container_name: nextgen_egress
     restart: unless-stopped
-    # CHÚ Ý ĐIỂM FIX: Xóa sạch lệnh đọc file và volume gắn file. 
-    # Nạp trực tiếp tham số vào thẳng container. Không có file = Không bao giờ lỗi "is a directory" nữa!
     environment:
-      - EGRESS_API_KEY=API_nextgen_admin_key
-      - EGRESS_API_SECRET=SEC_thanhnguyen_group_super_secure_9999
-      - EGRESS_WS_URL=ws://livekit-server:7880
-      - EGRESS_REDIS_ADDRESS=redis:6379
+      # Truyền thẳng nguyên khối YAML vào biến môi trường này. 
+      # Dấu "|" ở dưới để giữ đúng định dạng xuống dòng của YAML.
+      EGRESS_CONFIG: |
+        api_key: "API_nextgen_admin_key"
+        api_secret: "SEC_thanhnguyen_group_super_secure_9999"
+        ws_url: "ws://livekit-server:7880"
+        redis:
+          address: "redis:6379"
     depends_on:
       - livekit-server
       - redis
