@@ -2,10 +2,10 @@ version: '3.8'
 
 services:
   redis:
-    image: redis:7-alpine
+    image: 'redis:7-alpine'
     container_name: nextgen_redis
     restart: unless-stopped
-    command: redis-server --save 60 1 --loglevel warning
+    command: 'redis-server --save 60 1 --loglevel warning'
     networks:
       - nextgen_network
 
@@ -15,14 +15,27 @@ services:
       dockerfile: Dockerfile.livekit
     container_name: nextgen_livekit
     restart: unless-stopped
+    # Mở các port cần thiết cho WebRTC
     ports:
-      - "7881:7881/tcp"
-      - "7882:7882/udp"
-      - "50000-50050:50000-50050/udp"
+      - '7880:7880'
+      - '7881:7881/tcp'
+      - '7882:7882/udp'
+      - '50000-50050:50000-50050/udp'
     depends_on:
       - redis
     networks:
       - nextgen_network
+    labels:
+      - "coolify.managed=true"
+      # ÉP TRAEFIK DẪN TÊN MIỀN VÀO PORT 7880 (QUAN TRỌNG NHẤT)
+      - "traefik.enable=true"
+      - "traefik.http.routers.livekit-server.rule=Host(`livekit.thanhnguyen.group`)"
+      - "traefik.http.routers.livekit-server.entrypoints=https"
+      - "traefik.http.routers.livekit-server.tls=true"
+      - "traefik.http.routers.livekit-server.tls.certresolver=letsencrypt"
+      - "traefik.http.services.livekit-server.loadbalancer.server.port=7880"
+    environment:
+      - SERVICE_FQDN_LIVEKIT_SERVER=livekit.thanhnguyen.group
 
 networks:
   nextgen_network:
