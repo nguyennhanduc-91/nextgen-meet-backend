@@ -5,8 +5,8 @@ services:
     image: 'redis:7-alpine'
     container_name: nextgen_redis
     restart: unless-stopped
-    # Đặt mật khẩu cho Redis tại đây
-    command: redis-server --requirepass ThanhNguyenGroup123 --save 60 1 --loglevel warning
+    # Tắt mật khẩu, tắt chế độ bảo vệ để LiveKit gõ cửa là mở ngay
+    command: redis-server --protected-mode no --save 60 1 --loglevel warning
     network_mode: host
 
   livekit-server:
@@ -31,7 +31,3 @@ services:
       - "traefik.http.middlewares.livekit-cors.headers.accesscontrolallowheaders=*"
       - "traefik.http.middlewares.livekit-cors.headers.accesscontrolallowcredentials=true"
       - "traefik.http.routers.livekit-server.middlewares=livekit-cors"
-
-networks:
-  nextgen_network:
-    driver: bridge
