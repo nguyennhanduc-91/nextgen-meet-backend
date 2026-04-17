@@ -8,7 +8,6 @@ rtc:
   use_external_ip: true
   port_range_start: 50000
   port_range_end: 50050
-  # Giới hạn 2.5Mbps mỗi Client để đảm bảo gánh được 1000 người
   max_bitrate: 2500000
 
 redis:
@@ -18,7 +17,6 @@ redis:
   db: 0
 
 keys:
-  # Key đã được tạo sẵn cố định, khớp với Egress và Frontend
   API_nextgen_admin_key: "SEC_thanhnguyen_group_super_secure_9999"
 
 room:
