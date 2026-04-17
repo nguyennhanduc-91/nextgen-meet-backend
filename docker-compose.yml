@@ -6,6 +6,7 @@ services:
     container_name: nextgen_redis
     restart: unless-stopped
     command: 'redis-server --save 60 1 --loglevel warning'
+    # Redis vẫn chạy trong mạng nội bộ để an toàn
     networks:
       - nextgen_network
 
@@ -15,15 +16,11 @@ services:
       dockerfile: Dockerfile.livekit
     container_name: nextgen_livekit
     restart: unless-stopped
-    ports:
-      - '7880:7880'
-      - '7881:7881/tcp'
-      - '7882:7882/udp'
-      - '50000-50050:50000-50050/udp'
+    # CHẾ ĐỘ HOST: Kết nối trực tiếp vào IP VPS, bypass mọi lỗi 503/Port
+    network_mode: host
     depends_on:
       - redis
-    networks:
-      - nextgen_network
+    # Vì dùng network host nên không cần khai báo ports: hay networks: cho livekit-server
     labels:
       - "coolify.managed=true"
       - "traefik.enable=true"
@@ -31,22 +28,15 @@ services:
       - "traefik.http.routers.livekit-server.entrypoints=https"
       - "traefik.http.routers.livekit-server.tls=true"
       - "traefik.http.routers.livekit-server.tls.certresolver=letsencrypt"
+      # Trỏ thẳng về IP nội bộ của Docker cho Traefik
       - "traefik.http.services.livekit-server.loadbalancer.server.port=7880"
       
-      # --- CẤU HÌNH FIX LỖI SIGNAL CONNECTION (WEBSOCKET) ---
+      # FIX CORS TRIỆT ĐỂ
       - "traefik.http.middlewares.livekit-cors.headers.accesscontrolallowmethods=GET,OPTIONS,PUT,POST,DELETE"
       - "traefik.http.middlewares.livekit-cors.headers.accesscontrolalloworiginlist=https://meet.thanhnguyen.group"
       - "traefik.http.middlewares.livekit-cors.headers.accesscontrolallowheaders=*"
       - "traefik.http.middlewares.livekit-cors.headers.accesscontrolallowcredentials=true"
       - "traefik.http.routers.livekit-server.middlewares=livekit-cors"
-      
-      # Tăng thời gian chờ để không bị Abort (Ngắt kết nối giữa chừng)
-      - "traefik.http.middlewares.livekit-timeout.forwardedingheader.setup=true"
-      # Thêm nhãn này nếu Coolify của bạn dùng bản mới để giữ kết nối lâu hơn
-      - "traefik.http.services.livekit-server.loadbalancer.responseForwarding.flushInterval=100ms"
-
-    environment:
-      - SERVICE_FQDN_LIVEKIT_SERVER=livekit.thanhnguyen.group
 
 networks:
   nextgen_network:
