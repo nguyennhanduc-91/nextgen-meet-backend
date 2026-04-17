@@ -7,18 +7,21 @@ rtc:
   use_external_ip: true
   port_range_start: 50000
   port_range_end: 50050
-  enable_loopback_candidate: true
 
+# REDIS LÀ BẮT BUỘC ĐỂ KÍCH HOẠT EGRESS (GHI HÌNH) VÀ MULTI-NODE
 redis:
   address: 127.0.0.1:6380
   username: ""
-  password: "" 
+  password: ""
   db: 0
+
 keys:
   API_nextgen_admin_key: "SEC_thanhnguyen_group_super_secure_9999"
+
 room:
   empty_timeout: 300
   max_participants: 1000
+
 logging:
   json: false
   level: info
