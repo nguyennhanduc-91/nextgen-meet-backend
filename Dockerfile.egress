@@ -1,0 +1,5 @@
+FROM livekit/egress:latest
+# Copy cứng file cấu hình vào bên trong image
+COPY egress.yaml /etc/egress.yaml
+# Chạy egress
+CMD ["--config", "/etc/egress.yaml"]
