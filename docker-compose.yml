@@ -5,9 +5,11 @@ services:
     image: 'redis:7-alpine'
     container_name: nextgen_redis
     restart: unless-stopped
-    # Chạy Redis với chế độ không mật khẩu
-    command: redis-server --protected-mode no --save 60 1 --loglevel warning
+    # Ép chạy ở port 6380 để tránh đụng độ với Redis có sẵn trên máy chủ
+    command: redis-server --port 6380 --protected-mode no --save 60 1 --loglevel warning
     network_mode: host
+
+  # ... (phần livekit-server giữ nguyên như trước)
 
   livekit-server:
     build:
