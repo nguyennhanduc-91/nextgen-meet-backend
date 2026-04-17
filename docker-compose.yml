@@ -1,0 +1,41 @@
+version: '3.8'
+
+services:
+  redis:
+    image: redis:7-alpine
+    container_name: nextgen_redis
+    restart: unless-stopped
+    command: redis-server --save 60 1 --loglevel warning
+    networks:
+      - nextgen_network
+
+  livekit-server:
+    build:
+      context: .
+      dockerfile: Dockerfile.livekit
+    container_name: nextgen_livekit
+    restart: unless-stopped
+    ports:
+      - "7881:7881/tcp"
+      - "7882:7882/udp"
+      - "50000-50050:50000-50050/udp"
+    depends_on:
+      - redis
+    networks:
+      - nextgen_network
+
+  livekit-egress:
+    build:
+      context: .
+      dockerfile: Dockerfile.egress
+    container_name: nextgen_egress
+    restart: unless-stopped
+    depends_on:
+      - livekit-server
+      - redis
+    networks:
+      - nextgen_network
+
+networks:
+  nextgen_network:
+    driver: bridge
