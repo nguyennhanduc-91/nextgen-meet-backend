@@ -1,5 +1,0 @@
-api_key: "API_nextgen_admin_key"
-api_secret: "SEC_thanhnguyen_group_super_secure_9999"
-ws_url: "ws://livekit-server:7880"
-redis:
-  address: "redis:6379"
