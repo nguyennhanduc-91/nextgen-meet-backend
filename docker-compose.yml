@@ -32,10 +32,11 @@ services:
     container_name: nextgen_egress
     restart: unless-stopped
     environment:
-      # ĐÂY LÀ ĐIỂM QUAN TRỌNG NHẤT ĐỂ FIX LỖI "missing config"
-      - EGRESS_CONFIG_FILE=/etc/egress.yaml
+      # Cập nhật đường dẫn trỏ tới file mới
+      - EGRESS_CONFIG_FILE=/etc/egress-config.yaml
     volumes:
-      - ./egress.yaml:/etc/egress.yaml:ro
+      # Đổi tên file mount để ép Docker đọc file thật
+      - ./egress-config.yaml:/etc/egress-config.yaml:ro
     depends_on:
       - livekit-server
       - redis
