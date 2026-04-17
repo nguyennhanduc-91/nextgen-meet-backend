@@ -1,0 +1,5 @@
+FROM livekit/livekit-server:latest
+# Copy cứng file cấu hình vào bên trong image
+COPY livekit.yaml /etc/livekit.yaml
+# Chạy server với IP của bạn
+CMD ["--config", "/etc/livekit.yaml", "--node-ip", "194.233.84.253"]
