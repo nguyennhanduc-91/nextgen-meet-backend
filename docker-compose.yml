@@ -5,8 +5,8 @@ services:
     image: 'redis:7-alpine'
     container_name: nextgen_redis
     restart: unless-stopped
-    # BẬT bảo vệ và THÊM mật khẩu trùng với livekit.yaml
-    command: redis-server --requirepass "ThanhNguyenGroup123" --save 60 1 --loglevel warning
+    # Chạy Redis với chế độ không mật khẩu
+    command: redis-server --protected-mode no --save 60 1 --loglevel warning
     network_mode: host
 
   livekit-server:
