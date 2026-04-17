@@ -5,10 +5,9 @@ services:
     image: 'redis:7-alpine'
     container_name: nextgen_redis
     restart: unless-stopped
-    command: 'redis-server --save 60 1 --loglevel warning'
-    # Redis vẫn chạy trong mạng nội bộ để an toàn
-    networks:
-      - nextgen_network
+    # Đặt mật khẩu cho Redis tại đây
+    command: redis-server --requirepass ThanhNguyenGroup123 --save 60 1 --loglevel warning
+    network_mode: host
 
   livekit-server:
     build:
@@ -16,11 +15,9 @@ services:
       dockerfile: Dockerfile.livekit
     container_name: nextgen_livekit
     restart: unless-stopped
-    # CHẾ ĐỘ HOST: Kết nối trực tiếp vào IP VPS, bypass mọi lỗi 503/Port
     network_mode: host
     depends_on:
       - redis
-    # Vì dùng network host nên không cần khai báo ports: hay networks: cho livekit-server
     labels:
       - "coolify.managed=true"
       - "traefik.enable=true"
@@ -28,10 +25,7 @@ services:
       - "traefik.http.routers.livekit-server.entrypoints=https"
       - "traefik.http.routers.livekit-server.tls=true"
       - "traefik.http.routers.livekit-server.tls.certresolver=letsencrypt"
-      # Trỏ thẳng về IP nội bộ của Docker cho Traefik
       - "traefik.http.services.livekit-server.loadbalancer.server.port=7880"
-      
-      # FIX CORS TRIỆT ĐỂ
       - "traefik.http.middlewares.livekit-cors.headers.accesscontrolallowmethods=GET,OPTIONS,PUT,POST,DELETE"
       - "traefik.http.middlewares.livekit-cors.headers.accesscontrolalloworiginlist=https://meet.thanhnguyen.group"
       - "traefik.http.middlewares.livekit-cors.headers.accesscontrolallowheaders=*"
