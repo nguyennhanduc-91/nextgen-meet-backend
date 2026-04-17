@@ -24,26 +24,6 @@ services:
     networks:
       - nextgen_network
 
-  livekit-egress:
-    build:
-      context: .
-      dockerfile: Dockerfile.egress
-    container_name: nextgen_egress
-    restart: unless-stopped
-    # Truyền trực tiếp cấu hình qua biến môi trường
-    environment:
-      EGRESS_CONFIG: |
-        api_key: API_nextgen_admin_key
-        api_secret: SEC_thanhnguyen_group_super_secure_9999
-        ws_url: ws://livekit-server:7880
-        redis:
-          address: redis:6379
-    depends_on:
-      - livekit-server
-      - redis
-    networks:
-      - nextgen_network
-
 networks:
   nextgen_network:
     driver: bridge
