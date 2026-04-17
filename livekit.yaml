@@ -8,9 +8,9 @@ rtc:
   port_range_start: 50000
   port_range_end: 50050
 redis:
-  address: 127.0.0.1:6379
+  address: 127.0.0.1:6380
   username: ""
-  password: "" # SỬA LẠI THÀNH CHUỖI RỖNG Ở ĐÂY
+  password: ""
   db: 0
 keys:
   API_nextgen_admin_key: "SEC_thanhnguyen_group_super_secure_9999"
