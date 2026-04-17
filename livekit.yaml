@@ -7,7 +7,6 @@ rtc:
   use_external_ip: true
   port_range_start: 50000
   port_range_end: 50050
-  max_bitrate: 2500000
 redis:
   address: redis:6379
   username: ""
@@ -18,8 +17,6 @@ keys:
 room:
   empty_timeout: 300
   max_participants: 1000
-video:
-  dynacast: true
 logging:
   json: false
   level: info
