@@ -1,4 +1,4 @@
 FROM livekit/livekit-server:latest
 COPY livekit.yaml /etc/livekit.yaml
-# Chạy server với config và IP của bạn
+# Chú ý: Đảm bảo IP này là IP Public của máy chủ Coolify
 CMD ["--config", "/etc/livekit.yaml", "--node-ip", "194.233.84.253"]
