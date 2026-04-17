@@ -15,11 +15,11 @@ services:
     image: livekit/livekit-server:latest
     container_name: nextgen_livekit
     restart: unless-stopped
-    # ⚠️ QUAN TRỌNG: Bạn thay CHINH_XAC_IP_PUBLIC_CUA_BAN bằng IP thật của VPS. 
-    # TUYỆT ĐỐI KHÔNG điền 10.0.1.9. Nếu không thay đúng, phòng họp sẽ bị màn hình đen.
+    # Đã điền chính xác IP của bạn
     command: --config /etc/livekit.yaml --node-ip 194.233.84.253
     volumes:
-      - ./livekit.yaml:/etc/livekit.yaml
+      # Sửa lại mount để đảm bảo đọc đúng file, không bị kẹt thành thư mục
+      - ./livekit.yaml:/etc/livekit.yaml:ro 
     ports:
       - "7881:7881/tcp"
       - "7882:7882/udp"
@@ -35,7 +35,6 @@ services:
     restart: unless-stopped
     environment:
       - EGRESS_REDIS_ADDRESS=redis:6379 
-      # Key đã được tạo sẵn cố định
       - EGRESS_API_KEY=API_nextgen_admin_key
       - EGRESS_API_SECRET=SEC_thanhnguyen_group_super_secure_9999
       - EGRESS_WS_URL=ws://livekit-server:7880
