@@ -31,8 +31,9 @@ services:
     image: livekit/egress:latest
     container_name: nextgen_egress
     restart: unless-stopped
-    # Ép Egress đọc cấu hình từ file thay vì biến môi trường
-    command: --config /etc/egress.yaml
+    environment:
+      # ĐÂY LÀ ĐIỂM QUAN TRỌNG NHẤT ĐỂ FIX LỖI "missing config"
+      - EGRESS_CONFIG_FILE=/etc/egress.yaml
     volumes:
       - ./egress.yaml:/etc/egress.yaml:ro
     depends_on:
