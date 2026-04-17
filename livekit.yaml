@@ -7,16 +7,10 @@ rtc:
   use_external_ip: true
   port_range_start: 50000
   port_range_end: 50050
-  # Thêm tối ưu mạng RTC
   enable_loopback_candidate: true
 
-# THÊM CẤU HÌNH VIDEO ĐỂ ÉP CHẤT LƯỢNG CAO NHẤT
-video:
-  dynacast: true # Tự động tắt/bật luồng video mượt mà khi người dùng cuộn khỏi màn hình
-  max_bitrate: 3500000 # Tối đa ~3.5Mbps cho mỗi người (Rất nét, Full HD)
-
 redis:
-  address: 127.0.0.1:6380 # Đã đổi cổng như bài trước
+  address: 127.0.0.1:6380
   username: ""
   password: "" 
   db: 0
