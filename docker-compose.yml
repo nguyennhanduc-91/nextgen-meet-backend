@@ -31,13 +31,11 @@ services:
     image: livekit/egress:latest
     container_name: nextgen_egress
     restart: unless-stopped
-    # ÉP CONTAINER TỰ VIẾT FILE CONFIG TRƯỚC KHI CHẠY (Bypass mọi lỗi missing config)
-    command: >
-      sh -c "echo 'api_key: \"API_nextgen_admin_key\"
-      api_secret: \"SEC_thanhnguyen_group_super_secure_9999\"
-      ws_url: \"ws://livekit-server:7880\"
-      redis:
-        address: \"redis:6379\"' > /config.yaml && egress --config /config.yaml"
+    # Dùng lệnh gốc, trỏ thẳng tới file tên mới
+    command: --config /etc/egress-v2.yaml
+    volumes:
+      # Ánh xạ file mới tinh, Docker sẽ buộc phải đọc đây là FILE chứ không phải THƯ MỤC
+      - ./egress-v2.yaml:/etc/egress-v2.yaml:ro
     depends_on:
       - livekit-server
       - redis
