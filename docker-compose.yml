@@ -3,18 +3,19 @@ version: "3.9"
 services:
   # =================================================================
   # LÕI TRUYỀN TẢI VIDEO (LIVEKIT SERVER)
-  # Đã loại bỏ hoàn toàn Redis nội bộ, chuyển sang dùng Dragonfly
+  # Đã cấu hình Dragonfly & Chống tràn RAM Docker Proxy
   # =================================================================
   livekit-server:
     image: livekit/livekit-server:latest
-    # Dùng bash để tự động sinh file cấu hình livekit.yaml siêu sạch
     command: >
       sh -c "cat <<EOF > /livekit.yaml
       port: 7880
+      bind_addresses:
+        - \"\"
       rtc:
         tcp_port: 7881
         port_range_start: 50000
-        port_range_end: 60000
+        port_range_end: 50200
         use_external_ip: true
       redis:
         address: '194.233.84.253:6379'
@@ -27,8 +28,9 @@ services:
     ports:
       - "7880:7880"
       - "7881:7881"
-      - "50000-60000:50000-60000/udp"
+      - "50000-50200:50000-50200/udp" # ĐÃ FIX: Thu hẹp cổng để tránh tràn RAM
+    deploy:
+      resources:
+        limits:
+          memory: 1G # ĐÃ FIX: Khóa cứng RAM tối đa không vượt quá 1GB
     restart: unless-stopped
-
-# Khối 'services' hiện tại chỉ còn duy nhất livekit-server. 
-# Hoàn toàn không còn bất kỳ dấu vết nào của redis cũ.
