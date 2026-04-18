@@ -3,34 +3,31 @@ version: "3.9"
 services:
   # =================================================================
   # LÕI TRUYỀN TẢI VIDEO (LIVEKIT SERVER)
-  # Đã cấu hình Dragonfly & Chống tràn RAM Docker Proxy
+  # Dùng biến môi trường LIVEKIT_CONFIG thay vì viết file
   # =================================================================
   livekit-server:
     image: livekit/livekit-server:latest
-    command: >
-      sh -c "cat <<EOF > /livekit.yaml
-      port: 7880
-      bind_addresses:
-        - \"\"
-      rtc:
-        tcp_port: 7881
-        port_range_start: 50000
-        port_range_end: 50200
-        use_external_ip: true
-      redis:
-        address: '194.233.84.253:6379'
-        password: 'fE0RUoc9Y7vvUReP2bgoNgN7mwYMZ3fILM1vRGLo1kzwJOKOLT5V0ovdY3jY8v8c'
-        db: 0
-      keys:
-        API_nextgen_admin_key: SEC_thanhnguyen_group_super_secure_9999
-      EOF
-      /livekit-server --config /livekit.yaml"
+    environment:
+      # Chìa khóa quản trị Admin
+      LIVEKIT_KEYS: "API_nextgen_admin_key: SEC_thanhnguyen_group_super_secure_9999"
+      # Khối cấu hình lõi (Ép 200 cổng UDP và Dragonfly)
+      LIVEKIT_CONFIG: |
+        port: 7880
+        rtc:
+          tcp_port: 7881
+          port_range_start: 50000
+          port_range_end: 50200
+          use_external_ip: true
+        redis:
+          address: "194.233.84.253:6379"
+          password: "fE0RUoc9Y7vvUReP2bgoNgN7mwYMZ3fILM1vRGLo1kzwJOKOLT5V0ovdY3jY8v8c"
+          db: 0
     ports:
       - "7880:7880"
       - "7881:7881"
-      - "50000-50200:50000-50200/udp" # ĐÃ FIX: Thu hẹp cổng để tránh tràn RAM
+      - "50000-50200:50000-50200/udp"
     deploy:
       resources:
         limits:
-          memory: 1G # ĐÃ FIX: Khóa cứng RAM tối đa không vượt quá 1GB
+          memory: 1G # Khóa cứng RAM tối đa 1GB
     restart: unless-stopped
