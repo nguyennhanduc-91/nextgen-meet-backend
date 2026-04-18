@@ -1,35 +1,34 @@
-version: '3.8'
+version: "3.9"
 
 services:
-  redis:
-    image: 'redis:7-alpine'
-    container_name: nextgen_redis
-    restart: unless-stopped
-    # Ép chạy ở port 6380 để tránh đụng độ với Redis có sẵn trên máy chủ
-    command: redis-server --port 6380 --protected-mode no --save 60 1 --loglevel warning
-    network_mode: host
-
-  # ... (phần livekit-server giữ nguyên như trước)
-
+  # =================================================================
+  # LÕI TRUYỀN TẢI VIDEO (LIVEKIT SERVER)
+  # Đã loại bỏ hoàn toàn Redis nội bộ, chuyển sang dùng Dragonfly
+  # =================================================================
   livekit-server:
-    build:
-      context: .
-      dockerfile: Dockerfile.livekit
-    container_name: nextgen_livekit
+    image: livekit/livekit-server:latest
+    # Dùng bash để tự động sinh file cấu hình livekit.yaml siêu sạch
+    command: >
+      sh -c "cat <<EOF > /livekit.yaml
+      port: 7880
+      rtc:
+        tcp_port: 7881
+        port_range_start: 50000
+        port_range_end: 60000
+        use_external_ip: true
+      redis:
+        address: '194.233.84.253:6379'
+        password: 'fE0RUoc9Y7vvUReP2bgoNgN7mwYMZ3fILM1vRGLo1kzwJOKOLT5V0ovdY3jY8v8c'
+        db: 0
+      keys:
+        API_nextgen_admin_key: SEC_thanhnguyen_group_super_secure_9999
+      EOF
+      /livekit-server --config /livekit.yaml"
+    ports:
+      - "7880:7880"
+      - "7881:7881"
+      - "50000-60000:50000-60000/udp"
     restart: unless-stopped
-    network_mode: host
-    depends_on:
-      - redis
-    labels:
-      - "coolify.managed=true"
-      - "traefik.enable=true"
-      - "traefik.http.routers.livekit-server.rule=Host(`livekit.thanhnguyen.group`)"
-      - "traefik.http.routers.livekit-server.entrypoints=https"
-      - "traefik.http.routers.livekit-server.tls=true"
-      - "traefik.http.routers.livekit-server.tls.certresolver=letsencrypt"
-      - "traefik.http.services.livekit-server.loadbalancer.server.port=7880"
-      - "traefik.http.middlewares.livekit-cors.headers.accesscontrolallowmethods=GET,OPTIONS,PUT,POST,DELETE"
-      - "traefik.http.middlewares.livekit-cors.headers.accesscontrolalloworiginlist=https://meet.thanhnguyen.group"
-      - "traefik.http.middlewares.livekit-cors.headers.accesscontrolallowheaders=*"
-      - "traefik.http.middlewares.livekit-cors.headers.accesscontrolallowcredentials=true"
-      - "traefik.http.routers.livekit-server.middlewares=livekit-cors"
+
+# Khối 'services' hiện tại chỉ còn duy nhất livekit-server. 
+# Hoàn toàn không còn bất kỳ dấu vết nào của redis cũ.
