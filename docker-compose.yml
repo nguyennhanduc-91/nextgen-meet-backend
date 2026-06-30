@@ -3,14 +3,11 @@ version: "3.9"
 services:
   # =================================================================
   # LÕI TRUYỀN TẢI VIDEO (LIVEKIT SERVER)
-  # Dùng biến môi trường LIVEKIT_CONFIG thay vì viết file
   # =================================================================
   livekit-server:
     image: livekit/livekit-server:latest
     environment:
-      # Chìa khóa quản trị Admin
       LIVEKIT_KEYS: "API_nextgen_admin_key: SEC_thanhnguyen_group_super_secure_9999"
-      # Khối cấu hình lõi (Ép 200 cổng UDP và Dragonfly)
       LIVEKIT_CONFIG: |
         port: 7880
         rtc:
@@ -29,5 +26,13 @@ services:
     deploy:
       resources:
         limits:
-          memory: 1G # Khóa cứng RAM tối đa 1GB
+          memory: 1G
     restart: unless-stopped
+    # CHỈ ĐỊNH LIVEKIT VÀO CHUNG MẠNG VỚI REDIS
+    networks:
+      - coolify
+
+# KHAI BÁO MẠNG COOLIFY CÓ SẴN
+networks:
+  coolify:
+    external: true
