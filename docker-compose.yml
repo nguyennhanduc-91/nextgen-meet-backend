@@ -28,11 +28,3 @@ services:
         limits:
           memory: 1G
     restart: unless-stopped
-    # CHỈ ĐỊNH LIVEKIT VÀO CHUNG MẠNG VỚI REDIS
-    networks:
-      - coolify
-
-# KHAI BÁO MẠNG COOLIFY CÓ SẴN
-networks:
-  coolify:
-    external: true
