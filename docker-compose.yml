@@ -16,7 +16,7 @@ services:
           port_range_end: 50200
           use_external_ip: true
         redis:
-          address: "coolify-redis:6379"
+          address: "10.0.1.5:6379"
           password: "fE0RUoc9Y7vvUReP2bgoNgN7mwYMZ3fILM1vRGLo1kzwJOKOLT5V0ovdY3jY8v8c"
           db: 0
     ports:
