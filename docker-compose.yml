@@ -6,7 +6,7 @@ services:
   # =================================================================
   redis-livekit:
     image: redis:7-alpine
-    command: redis-server --requirepass "fE0RUoc9Y7vvUReP2bgoNgN7mwYMZ3fILM1vRGLo1kzwJOKOLT5V0ovdY3jY8v8c"
+    command: redis-server --requirepass "fE0RUoc9Y7vvUReP2bgoNgN7mwYMZ3fILmpadwnhanasdowuM1vRGLo1kzwJOKOsdasdaLT5V0ovdY3jY8v8c"
     restart: unless-stopped
     volumes:
       - redis-livekit-data:/data
@@ -30,7 +30,7 @@ services:
         redis:
           # Trỏ trực tiếp vào tên container Redis nội bộ ở trên
           address: "redis-livekit:6379"
-          password: "fE0RUoc9Y7vvUReP2bgoNgN7mwYMZ3fILM1vRGLo1kzwJOKOLT5V0ovdY3jY8v8c"
+          password: "fE0RUoc9Y7vvUReP2bgoNgN7mwYMZ3fILmpadwnhanasdowuM1vRGLo1kzwJOKOsdasdaLT5V0ovdY3jY8v8c"
           db: 0
     ports:
       - "7880:7880"
