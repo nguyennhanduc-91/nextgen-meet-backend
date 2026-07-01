@@ -2,10 +2,22 @@ version: "3.9"
 
 services:
   # =================================================================
-  # LÕI TRUYỀN TẢI VIDEO (LIVEKIT SERVER)
+  # 1. REDIS NỘI BỘ DÀNH RIÊNG CHO LIVEKIT (BẢO MẬT, KHÔNG MỞ PORT)
+  # =================================================================
+  redis-livekit:
+    image: redis:7-alpine
+    command: redis-server --requirepass "fE0RUoc9Y7vvUReP2bgoNgN7mwYMZ3fILM1vRGLo1kzwJOKOLT5V0ovdY3jY8v8c"
+    restart: unless-stopped
+    volumes:
+      - redis-livekit-data:/data
+
+  # =================================================================
+  # 2. LÕI TRUYỀN TẢI VIDEO (LIVEKIT SERVER)
   # =================================================================
   livekit-server:
     image: livekit/livekit-server:latest
+    depends_on:
+      - redis-livekit
     environment:
       LIVEKIT_KEYS: "API_nextgen_admin_key: SEC_thanhnguyen_group_super_secure_9999"
       LIVEKIT_CONFIG: |
@@ -16,7 +28,8 @@ services:
           port_range_end: 50200
           use_external_ip: true
         redis:
-          address: "10.0.1.5:6379"
+          # Trỏ trực tiếp vào tên container Redis nội bộ ở trên
+          address: "redis-livekit:6379"
           password: "fE0RUoc9Y7vvUReP2bgoNgN7mwYMZ3fILM1vRGLo1kzwJOKOLT5V0ovdY3jY8v8c"
           db: 0
     ports:
@@ -28,3 +41,7 @@ services:
         limits:
           memory: 1G
     restart: unless-stopped
+
+# Khai báo ổ cứng ảo để lưu dữ liệu Redis không bị mất khi restart
+volumes:
+  redis-livekit-data:
